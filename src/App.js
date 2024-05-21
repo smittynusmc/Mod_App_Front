@@ -16,6 +16,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Profile from "./components/profile";
 import { useState } from "react";
 import { auth } from "./components/firebase";
+import YouTubeComments from "./components/YouTubeComments"; // Import the YouTubeComments component
 
 function App() {
   const [user, setUser] = useState();
@@ -37,6 +38,7 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<SignUp />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/youtube-comments" element={<YouTubeComments />} /> 
             </Routes>
             <ToastContainer />
           </div>

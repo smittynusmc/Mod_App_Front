@@ -11,16 +11,18 @@ const YouTubeComments = () => {
     const token = urlParams.get("access_token");
     if (token) {
       setAccessToken(token);
+      // Optionally, remove the access token from the URL
+      window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, []);
 
   const handleAuth = () => {
-    window.location.href = "https://youtube-comments-backend-xxxxx.a.run.app/auth/google"; // Replace with your Cloud Run URL
+    window.location.href = "https://youtube-comments-backend-23opjzqi7q-uc.a.run.app/auth/google"; // Replace with your Cloud Run URL
   };
 
   const fetchComments = async () => {
     try {
-      const response = await axios.post("https://youtube-comments-backend-23opjzqi7q-uc.a.run.app", { // Replace with your Cloud Run URL
+      const response = await axios.post("https://youtube-comments-backend-23opjzqi7q-uc.a.run.app/youtube/comments", { // Replace with your Cloud Run URL
         videoId,
         accessToken,
       });

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { auth, db } from "./firebase";
 import { doc, getDoc } from "firebase/firestore";
+import YouTubeComments from "./YouTubeComments"; // Import the YouTubeComments component
+
 
 function Profile() {
   const [userDetails, setUserDetails] = useState(null);
@@ -71,6 +73,8 @@ function Profile() {
           <button className="btn btn-primary" onClick={handleLogout}>
             Logout
           </button>
+          {/* Add YouTubeComments component */}
+          <YouTubeComments />
         </>
       ) : (
         <p>User is not logged in.</p>
