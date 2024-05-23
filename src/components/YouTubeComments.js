@@ -3,7 +3,7 @@ import axios from "axios";
 
 const YouTubeComments = () => {
   const [videoId, setVideoId] = useState("");
-  const [commentThreads, setCommentThreads] = useState([]);
+  const [commentAuthors, setCommentAuthors] = useState([]);
   const [accessToken, setAccessToken] = useState("");
 
   useEffect(() => {
@@ -24,19 +24,20 @@ const YouTubeComments = () => {
         videoId,
         accessToken,
       });
-      setCommentThreads(response.data);
+      const commentThreads = response.data;
+      const authors = commentThreads.flatMap(thread => [
+        thread.snippet.topLevelComment.snippet.authorDisplayName,
+        ...(thread.replies ? thread.replies.comments.map(reply => reply.snippet.authorDisplayName) : [])
+      ]);
+      setCommentAuthors(authors);
     } catch (error) {
       console.error("Error fetching comment threads", error);
     }
   };
 
   const selectWinner = () => {
-    if (commentThreads.length === 0) return;
-    const allComments = commentThreads.flatMap(thread => [
-      thread.snippet.topLevelComment.snippet.textDisplay,
-      ...(thread.replies ? thread.replies.comments.map(reply => reply.snippet.textDisplay) : [])
-    ]);
-    const winner = allComments[Math.floor(Math.random() * allComments.length)];
+    if (commentAuthors.length === 0) return;
+    const winner = commentAuthors[Math.floor(Math.random() * commentAuthors.length)];
     alert(`The winner is: ${winner}`);
   };
 
@@ -54,16 +55,11 @@ const YouTubeComments = () => {
           />
           <button onClick={fetchComments}>Fetch Comments</button>
           <div>
-            {commentThreads.map((thread, index) => (
-              <div key={index}>
-                <p>{thread.snippet.topLevelComment.snippet.textDisplay}</p>
-                {thread.replies && thread.replies.comments.map((reply, replyIndex) => (
-                  <p key={replyIndex} style={{ marginLeft: "20px" }}>{reply.snippet.textDisplay}</p>
-                ))}
-              </div>
+            {commentAuthors.map((author, index) => (
+              <p key={index}>{author}</p>
             ))}
           </div>
-          {commentThreads.length > 0 && (
+          {commentAuthors.length > 0 && (
             <button onClick={selectWinner}>Select Winner</button>
           )}
         </>
