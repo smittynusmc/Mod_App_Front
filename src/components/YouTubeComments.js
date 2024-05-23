@@ -3,7 +3,7 @@ import axios from "axios";
 
 const YouTubeComments = () => {
   const [videoId, setVideoId] = useState("");
-  const [comments, setComments] = useState([]);
+  const [commentThreads, setCommentThreads] = useState([]);
   const [accessToken, setAccessToken] = useState("");
 
   useEffect(() => {
@@ -11,8 +11,6 @@ const YouTubeComments = () => {
     const token = urlParams.get("access_token");
     if (token) {
       setAccessToken(token);
-      // Optionally, remove the access token from the URL
-      window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, []);
 
@@ -26,18 +24,19 @@ const YouTubeComments = () => {
         videoId,
         accessToken,
       });
-      const commentsData = response.data.map(
-        (item) => item.snippet.topLevelComment.snippet.textDisplay
-      );
-      setComments(commentsData);
+      setCommentThreads(response.data);
     } catch (error) {
-      console.error("Error fetching comments", error);
+      console.error("Error fetching comment threads", error);
     }
   };
 
   const selectWinner = () => {
-    if (comments.length === 0) return;
-    const winner = comments[Math.floor(Math.random() * comments.length)];
+    if (commentThreads.length === 0) return;
+    const allComments = commentThreads.flatMap(thread => [
+      thread.snippet.topLevelComment.snippet.textDisplay,
+      ...(thread.replies ? thread.replies.comments.map(reply => reply.snippet.textDisplay) : [])
+    ]);
+    const winner = allComments[Math.floor(Math.random() * allComments.length)];
     alert(`The winner is: ${winner}`);
   };
 
@@ -55,11 +54,16 @@ const YouTubeComments = () => {
           />
           <button onClick={fetchComments}>Fetch Comments</button>
           <div>
-            {comments.map((comment, index) => (
-              <p key={index}>{comment}</p>
+            {commentThreads.map((thread, index) => (
+              <div key={index}>
+                <p>{thread.snippet.topLevelComment.snippet.textDisplay}</p>
+                {thread.replies && thread.replies.comments.map((reply, replyIndex) => (
+                  <p key={replyIndex} style={{ marginLeft: "20px" }}>{reply.snippet.textDisplay}</p>
+                ))}
+              </div>
             ))}
           </div>
-          {comments.length > 0 && (
+          {commentThreads.length > 0 && (
             <button onClick={selectWinner}>Select Winner</button>
           )}
         </>
@@ -67,6 +71,5 @@ const YouTubeComments = () => {
     </div>
   );
 };
-
 
 export default YouTubeComments;
