@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { TextField, Button, Select, MenuItem, InputLabel, FormControl, Typography, Container, Paper, List, ListItem, ListItemText, CircularProgress } from "@mui/material";
 import "./YouTubeComments.css"; // Import the new CSS file
 
 const YouTubeComments = () => {
@@ -8,6 +9,7 @@ const YouTubeComments = () => {
   const [accessToken, setAccessToken] = useState("");
   const [maxResults, setMaxResults] = useState(10); // Default to 10 comments per request
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -48,6 +50,7 @@ const YouTubeComments = () => {
 
   const fetchComments = async () => {
     setError(null);
+    setLoading(true);
     const validVideoId = extractVideoId(videoId);
     try {
       const response = await axios.post("https://youtube-comments-backend-23opjzqi7q-uc.a.run.app/youtube/comments", { // Replace with your Cloud Run URL
@@ -61,6 +64,7 @@ const YouTubeComments = () => {
         ...(thread.replies ? thread.replies.comments.map(reply => reply.snippet.authorDisplayName) : [])
       ]);
       setCommentAuthors(authors);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching comment threads", error);
       if (error.response && error.response.status === 404) {
@@ -68,6 +72,7 @@ const YouTubeComments = () => {
       } else {
         setError("Failed to fetch comments. Please try again.");
       }
+      setLoading(false);
     }
   };
 
@@ -78,37 +83,54 @@ const YouTubeComments = () => {
   };
 
   return (
-    <div>
+    <Container component={Paper} elevation={3} sx={{ padding: 4, marginTop: 4 }}>
       {!accessToken ? (
-        <button onClick={handleAuth}>Authenticate with Google</button>
+        <Button variant="contained" color="primary" onClick={handleAuth}>
+          Authenticate with Google
+        </Button>
       ) : (
         <>
-          <input
-            type="text"
+          <Typography variant="h5" gutterBottom>
+            YouTube Comment Picker
+          </Typography>
+          <TextField
+            fullWidth
+            label="YouTube Video URL or ID"
+            variant="outlined"
             value={videoId}
             onChange={(e) => setVideoId(e.target.value)}
-            placeholder="Enter YouTube Video URL or ID"
+            margin="normal"
           />
-          <select value={maxResults} onChange={(e) => setMaxResults(Number(e.target.value))}>
-            <option value={10}>10</option>
-            <option value={15}>15</option>
-            <option value={25}>25</option>
-            <option value={50}>50</option>
-            <option value={100}>100</option>
-          </select>
-          <button onClick={fetchComments}>Fetch Comments</button>
-          {error && <p style={{ color: 'red' }}>{error}</p>}
-          <div className="scrollable-list">
+          <FormControl fullWidth variant="outlined" margin="normal">
+            <InputLabel>Max Results</InputLabel>
+            <Select value={maxResults} onChange={(e) => setMaxResults(Number(e.target.value))} label="Max Results">
+              <MenuItem value={10}>10</MenuItem>
+              <MenuItem value={15}>15</MenuItem>
+              <MenuItem value={25}>25</MenuItem>
+              <MenuItem value={50}>50</MenuItem>
+              <MenuItem value={100}>100</MenuItem>
+            </Select>
+          </FormControl>
+          <Button variant="contained" color="primary" onClick={fetchComments} disabled={loading}>
+            Fetch Comments
+          </Button>
+          {loading && <CircularProgress sx={{ marginTop: 2 }} />}
+          {error && <Typography color="error" sx={{ marginTop: 2 }}>{error}</Typography>}
+          <List sx={{ marginTop: 2, maxHeight: 400, overflow: 'auto' }}>
             {commentAuthors.map((author, index) => (
-              <p key={index}>{author}</p>
+              <ListItem key={index}>
+                <ListItemText primary={author} />
+              </ListItem>
             ))}
-          </div>
+          </List>
           {commentAuthors.length > 0 && (
-            <button onClick={selectWinner}>Select Winner</button>
+            <Button variant="contained" color="secondary" onClick={selectWinner} sx={{ marginTop: 2 }}>
+              Select Winner
+            </Button>
           )}
         </>
       )}
-    </div>
+    </Container>
   );
 };
 

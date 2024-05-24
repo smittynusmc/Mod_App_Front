@@ -2,7 +2,8 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import { auth } from "./firebase";
 import { toast } from "react-toastify";
-import SignInwithGoogle from "./signInWIthGoogle";
+import SignInwithGoogle from "./signInWIthGoogle";  // Ensure this matches the file name exactly
+import { Container, Box, TextField, Button, Typography, Link } from "@mui/material";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -19,7 +20,6 @@ function Login() {
       });
     } catch (error) {
       console.log(error.message);
-
       toast.error(error.message, {
         position: "bottom-center",
       });
@@ -27,41 +27,60 @@ function Login() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h3>Login</h3>
+    <Container maxWidth="xs">
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        mt={8}
+        p={3}
+        component="form"
+        onSubmit={handleSubmit}
+        sx={{ boxShadow: 3, borderRadius: 2 }}
+      >
+        <Typography variant="h5" gutterBottom>
+          Login
+        </Typography>
 
-      <div className="mb-3">
-        <label>Email address</label>
-        <input
+        <TextField
+          fullWidth
+          label="Email Address"
+          variant="outlined"
+          margin="normal"
           type="email"
-          className="form-control"
-          placeholder="Enter email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
         />
-      </div>
 
-      <div className="mb-3">
-        <label>Password</label>
-        <input
+        <TextField
+          fullWidth
+          label="Password"
+          variant="outlined"
+          margin="normal"
           type="password"
-          className="form-control"
-          placeholder="Enter password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
-      </div>
 
-      <div className="d-grid">
-        <button type="submit" className="btn btn-primary">
+        <Button
+          fullWidth
+          variant="contained"
+          color="primary"
+          type="submit"
+          sx={{ mt: 2 }}
+        >
           Submit
-        </button>
-      </div>
-      <p className="forgot-password text-right">
-        New user <a href="/register">Register Here</a>
-      </p>
-      <SignInwithGoogle/>
-    </form>
+        </Button>
+
+        <Typography variant="body2" sx={{ mt: 2 }}>
+          New user? <Link href="/register">Register Here</Link>
+        </Typography>
+
+        <SignInwithGoogle />
+      </Box>
+    </Container>
   );
 }
 

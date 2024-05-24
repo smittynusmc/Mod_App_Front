@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { auth, db } from "./firebase";
 import { setDoc, doc } from "firebase/firestore";
 import { toast } from "react-toastify";
+import { Container, Box, TextField, Button, Typography, Link } from "@mui/material";
 
 function Register() {
   const [email, setEmail] = useState("");
@@ -21,7 +22,7 @@ function Register() {
           email: user.email,
           firstName: fname,
           lastName: lname,
-          photo:""
+          photo: ""
         });
       }
       console.log("User Registered Successfully!!");
@@ -37,61 +38,78 @@ function Register() {
   };
 
   return (
-    <form onSubmit={handleRegister}>
-      <h3>Sign Up</h3>
+    <Container maxWidth="xs">
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        mt={8}
+        p={3}
+        component="form"
+        onSubmit={handleRegister}
+        sx={{ boxShadow: 3, borderRadius: 2 }}
+      >
+        <Typography variant="h5" gutterBottom>
+          Sign Up
+        </Typography>
 
-      <div className="mb-3">
-        <label>First name</label>
-        <input
-          type="text"
-          className="form-control"
-          placeholder="First name"
+        <TextField
+          fullWidth
+          label="First Name"
+          variant="outlined"
+          margin="normal"
+          value={fname}
           onChange={(e) => setFname(e.target.value)}
           required
         />
-      </div>
 
-      <div className="mb-3">
-        <label>Last name</label>
-        <input
-          type="text"
-          className="form-control"
-          placeholder="Last name"
+        <TextField
+          fullWidth
+          label="Last Name"
+          variant="outlined"
+          margin="normal"
+          value={lname}
           onChange={(e) => setLname(e.target.value)}
         />
-      </div>
 
-      <div className="mb-3">
-        <label>Email address</label>
-        <input
+        <TextField
+          fullWidth
+          label="Email Address"
+          variant="outlined"
+          margin="normal"
           type="email"
-          className="form-control"
-          placeholder="Enter email"
+          value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-      </div>
 
-      <div className="mb-3">
-        <label>Password</label>
-        <input
+        <TextField
+          fullWidth
+          label="Password"
+          variant="outlined"
+          margin="normal"
           type="password"
-          className="form-control"
-          placeholder="Enter password"
+          value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-      </div>
 
-      <div className="d-grid">
-        <button type="submit" className="btn btn-primary">
+        <Button
+          fullWidth
+          variant="contained"
+          color="primary"
+          type="submit"
+          sx={{ mt: 2 }}
+        >
           Sign Up
-        </button>
-      </div>
-      <p className="forgot-password text-right">
-        Already registered <a href="/login">Login</a>
-      </p>
-    </form>
+        </Button>
+
+        <Typography variant="body2" sx={{ mt: 2 }}>
+          Already registered? <Link href="/login">Login</Link>
+        </Typography>
+      </Box>
+    </Container>
   );
 }
+
 export default Register;

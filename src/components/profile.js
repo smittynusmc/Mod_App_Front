@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { auth, db } from "./firebase";
 import { doc, getDoc } from "firebase/firestore";
 import YouTubeComments from "./YouTubeComments"; // Import the YouTubeComments component
+import { Container, Box, Typography, Button, Avatar, CircularProgress, Alert } from "@mui/material";
 
 function Profile() {
   const [userDetails, setUserDetails] = useState(null);
@@ -59,40 +60,53 @@ function Profile() {
   };
 
   if (loading) {
-    return <p>Loading...</p>;
+    return (
+      <Box display="flex" justifyContent="center" mt={5}>
+        <CircularProgress />
+      </Box>
+    );
   }
 
   if (error) {
-    return <p>{error}</p>;
+    return (
+      <Box display="flex" justifyContent="center" mt={5}>
+        <Alert severity="error">{error}</Alert>
+      </Box>
+    );
   }
 
   return (
-    <div>
+    <Container component={Box} mt={5}>
       {userDetails ? (
-        <>
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <img
-              src={userDetails.photo}
-              width={"40%"}
-              style={{ borderRadius: "50%" }}
-              alt="User profile"
-            />
-          </div>
-          <h3>Welcome {userDetails.firstName} 🙏🙏</h3>
-          <div>
-            <p>Email: {userDetails.email}</p>
-            <p>First Name: {userDetails.firstName}</p>
-            {/* <p>Last Name: {userDetails.lastName}</p> */}
-          </div>
-          <button className="btn btn-primary" onClick={handleLogout}>
+        <Box textAlign="center">
+          <Avatar
+            alt="User profile"
+            src={userDetails.photo}
+            sx={{ width: 100, height: 100, mx: "auto", mb: 2 }}
+          />
+          <Typography variant="h4" gutterBottom>
+            Welcome {userDetails.firstName} 🙏🙏
+          </Typography>
+          <Typography variant="body1">
+            Email: {userDetails.email}
+          </Typography>
+          <Typography variant="body1">
+            First Name: {userDetails.firstName}
+          </Typography>
+          {/* <Typography variant="body1">
+            Last Name: {userDetails.lastName}
+          </Typography> */}
+          <Button variant="contained" color="primary" onClick={handleLogout} sx={{ mt: 2 }}>
             Logout
-          </button>
+          </Button>
           <YouTubeComments />
-        </>
+        </Box>
       ) : (
-        <p>User is not logged in.</p>
+        <Box display="flex" justifyContent="center" mt={5}>
+          <Alert severity="info">User is not logged in.</Alert>
+        </Box>
       )}
-    </div>
+    </Container>
   );
 }
 
