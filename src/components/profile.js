@@ -3,27 +3,31 @@ import { auth, db } from "./firebase";
 import { doc, getDoc } from "firebase/firestore";
 import YouTubeComments from "./YouTubeComments"; // Import the YouTubeComments component
 
-
 function Profile() {
   const [userDetails, setUserDetails] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const fetchUserData = async (user) => {
     try {
       if (user) {
+        console.log("Fetching user data for UID:", user.uid);
         const docRef = doc(db, "Users", user.uid);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setUserDetails(docSnap.data());
-          console.log(docSnap.data());
+          console.log("User data:", docSnap.data());
         } else {
           console.log("No such document!");
+          setError("No such document!");
         }
       } else {
         console.log("User is not logged in");
+        setError("User is not logged in");
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
+      setError(error.message);
     } finally {
       setLoading(false);
     }
@@ -31,7 +35,13 @@ function Profile() {
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      fetchUserData(user);
+      if (user) {
+        console.log("User is authenticated. UID:", user.uid);
+        fetchUserData(user);
+      } else {
+        console.log("No authenticated user.");
+        setLoading(false);
+      }
     });
 
     // Cleanup subscription on unmount
@@ -50,6 +60,10 @@ function Profile() {
 
   if (loading) {
     return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
   }
 
   return (
@@ -73,7 +87,6 @@ function Profile() {
           <button className="btn btn-primary" onClick={handleLogout}>
             Logout
           </button>
-          {/* Add YouTubeComments component */}
           <YouTubeComments />
         </>
       ) : (

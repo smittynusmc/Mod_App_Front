@@ -4,12 +4,12 @@ import { toast } from "react-toastify";
 import { setDoc, doc } from "firebase/firestore";
 
 function SignInwithGoogle() {
-  function googleLogin() {
+  const googleLogin = async () => {
     const provider = new GoogleAuthProvider();
-    signInWithPopup(auth, provider).then(async (result) => {
-      console.log(result);
+    try {
+      const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      if (result.user) {
+      if (user) {
         await setDoc(doc(db, "Users", user.uid), {
           email: user.email,
           firstName: user.displayName,
@@ -21,8 +21,14 @@ function SignInwithGoogle() {
         });
         window.location.href = "/profile";
       }
-    });
-  }
+    } catch (error) {
+      console.error("Error during sign-in:", error);
+      toast.error("Error during sign-in. Please try again.", {
+        position: "bottom-center",
+      });
+    }
+  };
+
   return (
     <div>
       <p className="continue-p">--Or continue with--</p>
@@ -30,9 +36,10 @@ function SignInwithGoogle() {
         style={{ display: "flex", justifyContent: "center", cursor: "pointer" }}
         onClick={googleLogin}
       >
-        <img src={require("../google.png")} width={"60%"} />
+        <img src={require("../google.png")} width={"60%"} alt="Sign in with Google" />
       </div>
     </div>
   );
 }
+
 export default SignInwithGoogle;
