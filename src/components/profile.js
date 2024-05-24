@@ -85,7 +85,7 @@ function Profile() {
             sx={{ width: 100, height: 100, mx: "auto", mb: 2 }}
           />
           <Typography variant="h4" gutterBottom>
-            Welcome {userDetails.firstName} 🙏🙏
+            Welcome {userDetails.firstName}
           </Typography>
           <Typography variant="body1">
             Email: {userDetails.email}
