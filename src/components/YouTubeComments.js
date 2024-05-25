@@ -44,14 +44,23 @@ const YouTubeComments = () => {
     }
   };
 
-  const handleAuth = () => {
+  const handleAuth = async () => {
     window.location.href = "https://youtube-comments-backend-23opjzqi7q-uc.a.run.app/auth/google"; // Replace with your Cloud Run URL
   };
 
   const fetchComments = async () => {
     setError(null);
     setLoading(true);
+
+    // Check if access token is available, if not handle authentication
+    if (!accessToken) {
+      console.log("No access token found. Initiating authentication...");
+      await handleAuth();
+      return;
+    }
+
     const validVideoId = extractVideoId(videoId);
+    console.log("Fetching comments for video ID:", validVideoId);
     try {
       const response = await axios.post("https://youtube-comments-backend-23opjzqi7q-uc.a.run.app/youtube/comments", { // Replace with your Cloud Run URL
         videoId: validVideoId,
@@ -67,7 +76,10 @@ const YouTubeComments = () => {
       setLoading(false);
     } catch (error) {
       console.error("Error fetching comment threads", error);
-      if (error.response && error.response.status === 404) {
+      if (error.response && error.response.status === 401) {
+        setError("Session expired. Please re-authenticate.");
+        await handleAuth(); // Prompt re-authentication
+      } else if (error.response && error.response.status === 404) {
         setError("Video not found");
       } else {
         setError("Failed to fetch comments. Please try again.");
@@ -84,51 +96,43 @@ const YouTubeComments = () => {
 
   return (
     <Container component={Paper} elevation={3} sx={{ padding: 4, marginTop: 4 }}>
-      {!accessToken ? (
-        <Button variant="contained" color="primary" onClick={handleAuth}>
-          Authenticate with Google
+      <Typography variant="h5" gutterBottom>
+        YouTube Comment Picker
+      </Typography>
+      <TextField
+        fullWidth
+        label="YouTube Video URL or ID"
+        variant="outlined"
+        value={videoId}
+        onChange={(e) => setVideoId(e.target.value)}
+        margin="normal"
+      />
+      <FormControl fullWidth variant="outlined" margin="normal">
+        <InputLabel>Max Results</InputLabel>
+        <Select value={maxResults} onChange={(e) => setMaxResults(Number(e.target.value))} label="Max Results">
+          <MenuItem value={10}>10</MenuItem>
+          <MenuItem value={15}>15</MenuItem>
+          <MenuItem value={25}>25</MenuItem>
+          <MenuItem value={50}>50</MenuItem>
+          <MenuItem value={100}>100</MenuItem>
+        </Select>
+      </FormControl>
+      <Button variant="contained" color="primary" onClick={fetchComments} disabled={loading}>
+        Fetch Comments
+      </Button>
+      {loading && <CircularProgress sx={{ marginTop: 2 }} />}
+      {error && <Typography color="error" sx={{ marginTop: 2 }}>{error}</Typography>}
+      <List sx={{ marginTop: 2, maxHeight: 400, overflow: 'auto' }}>
+        {commentAuthors.map((author, index) => (
+          <ListItem key={index}>
+            <ListItemText primary={author} />
+          </ListItem>
+        ))}
+      </List>
+      {commentAuthors.length > 0 && (
+        <Button variant="contained" color="secondary" onClick={selectWinner} sx={{ marginTop: 2 }}>
+          Select Winner
         </Button>
-      ) : (
-        <>
-          <Typography variant="h5" gutterBottom>
-            YouTube Comment Picker
-          </Typography>
-          <TextField
-            fullWidth
-            label="YouTube Video URL or ID"
-            variant="outlined"
-            value={videoId}
-            onChange={(e) => setVideoId(e.target.value)}
-            margin="normal"
-          />
-          <FormControl fullWidth variant="outlined" margin="normal">
-            <InputLabel>Max Results</InputLabel>
-            <Select value={maxResults} onChange={(e) => setMaxResults(Number(e.target.value))} label="Max Results">
-              <MenuItem value={10}>10</MenuItem>
-              <MenuItem value={15}>15</MenuItem>
-              <MenuItem value={25}>25</MenuItem>
-              <MenuItem value={50}>50</MenuItem>
-              <MenuItem value={100}>100</MenuItem>
-            </Select>
-          </FormControl>
-          <Button variant="contained" color="primary" onClick={fetchComments} disabled={loading}>
-            Fetch Comments
-          </Button>
-          {loading && <CircularProgress sx={{ marginTop: 2 }} />}
-          {error && <Typography color="error" sx={{ marginTop: 2 }}>{error}</Typography>}
-          <List sx={{ marginTop: 2, maxHeight: 400, overflow: 'auto' }}>
-            {commentAuthors.map((author, index) => (
-              <ListItem key={index}>
-                <ListItemText primary={author} />
-              </ListItem>
-            ))}
-          </List>
-          {commentAuthors.length > 0 && (
-            <Button variant="contained" color="secondary" onClick={selectWinner} sx={{ marginTop: 2 }}>
-              Select Winner
-            </Button>
-          )}
-        </>
       )}
     </Container>
   );

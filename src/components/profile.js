@@ -99,7 +99,6 @@ function Profile() {
           <Button variant="contained" color="primary" onClick={handleLogout} sx={{ mt: 2 }}>
             Logout
           </Button>
-          <YouTubeComments />
         </Box>
       ) : (
         <Box display="flex" justifyContent="center" mt={5}>
