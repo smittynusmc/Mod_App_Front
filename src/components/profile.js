@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { auth, db } from "./firebase";
 import { doc, getDoc } from "firebase/firestore";
-import YouTubeComments from "./YouTubeComments"; // Import the YouTubeComments component
 import { Container, Box, Typography, Button, Avatar, CircularProgress, Alert } from "@mui/material";
 
 function Profile() {
