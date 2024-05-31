@@ -3,7 +3,7 @@ import { auth, db } from "./firebase";
 import { toast } from "react-toastify";
 import { setDoc, doc } from "firebase/firestore";
 
-function SignInwithGoogle() {
+function SignInWithGoogle() {
   const googleLogin = async () => {
     const provider = new GoogleAuthProvider();
     try {
@@ -23,7 +23,23 @@ function SignInwithGoogle() {
       }
     } catch (error) {
       console.error("Error during sign-in:", error);
-      toast.error("Error during sign-in. Please try again.", {
+      let errorMessage = "Error during sign-in. Please try again.";
+      if (error.message) {
+        try {
+          const response = await fetch(error.message);
+          if (response.headers.get("content-type")?.includes("application/json")) {
+            const parsedError = await response.json();
+            errorMessage = parsedError.error || errorMessage;
+          } else {
+            errorMessage = await response.text();
+          }
+        } catch (e) {
+          if (error.message.includes("Unauthorized")) {
+            errorMessage = "Unauthorized access. Please try again.";
+          }
+        }
+      }
+      toast.error(errorMessage, {
         position: "bottom-center",
       });
     }
@@ -42,4 +58,4 @@ function SignInwithGoogle() {
   );
 }
 
-export default SignInwithGoogle;
+export default SignInWithGoogle;

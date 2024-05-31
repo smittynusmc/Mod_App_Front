@@ -2,6 +2,23 @@ import React, { useEffect, useState } from "react";
 import { auth, db } from "./firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { Container, Box, Typography, Button, Avatar, CircularProgress, Alert } from "@mui/material";
+import { signOut } from "firebase/auth"; // Import the signOut function
+import { toast } from "react-toastify"; // Import toast for notifications
+
+const signOutUser = async () => {
+  try {
+    await signOut(auth);
+    toast.success("User logged out successfully", {
+      position: "top-center",
+    });
+    window.location.href = "/login"; // Redirect to login page or any other page
+  } catch (error) {
+    console.error("Error during sign-out:", error);
+    toast.error("Error during sign-out. Please try again.", {
+      position: "bottom-center",
+    });
+  }
+};
 
 function Profile() {
   const [userDetails, setUserDetails] = useState(null);
@@ -49,13 +66,7 @@ function Profile() {
   }, []);
 
   const handleLogout = async () => {
-    try {
-      await auth.signOut();
-      window.location.href = "/login";
-      console.log("User logged out successfully!");
-    } catch (error) {
-      console.error("Error logging out:", error.message);
-    }
+    await signOutUser(); // Use the signOutUser function
   };
 
   if (loading) {

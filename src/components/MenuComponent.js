@@ -3,6 +3,23 @@ import { useNavigate } from "react-router-dom";
 import { AppBar, Toolbar, IconButton, Menu, MenuItem, Typography, Box } from "@mui/material";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import { auth } from "./firebase";
+import { signOut } from "firebase/auth"; // Import the signOut function
+import { toast } from "react-toastify"; // Import toast for notifications
+
+const signOutUser = async () => {
+  try {
+    await signOut(auth);
+    toast.success("User logged out successfully", {
+      position: "top-center",
+    });
+    window.location.href = "/login"; // Redirect to login page or any other page
+  } catch (error) {
+    console.error("Error during sign-out:", error);
+    toast.error("Error during sign-out. Please try again.", {
+      position: "bottom-center",
+    });
+  }
+};
 
 const MenuComponent = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -17,13 +34,7 @@ const MenuComponent = () => {
   };
 
   const handleLogout = async () => {
-    try {
-      await auth.signOut();
-      navigate("/login");
-      console.log("User logged out successfully!");
-    } catch (error) {
-      console.error("Error logging out:", error.message);
-    }
+    await signOutUser(); // Use the signOutUser function
     handleClose();
   };
 

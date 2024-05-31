@@ -1,21 +1,27 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { TextField, Button, Select, MenuItem, InputLabel, FormControl, Typography, Container, Paper, List, ListItem, ListItemText, CircularProgress } from "@mui/material";
-import "./YouTubeComments.css"; // Import the new CSS file
+import "./YouTubeComments.css";
 
 const YouTubeComments = () => {
   const [videoId, setVideoId] = useState("");
   const [commentAuthors, setCommentAuthors] = useState([]);
   const [accessToken, setAccessToken] = useState("");
-  const [maxResults, setMaxResults] = useState(10); // Default to 10 comments per request
+  const [maxResults, setMaxResults] = useState(10);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get("access_token");
+    const videoIdParam = urlParams.get("videoId");
+    const maxResultsParam = urlParams.get("maxResults");
+
     if (token) {
       setAccessToken(token);
+      if (videoIdParam) setVideoId(videoIdParam);
+      if (maxResultsParam) setMaxResults(Number(maxResultsParam));
+      fetchComments(token, videoIdParam, maxResultsParam);
     }
   }, []);
 
@@ -26,7 +32,6 @@ const YouTubeComments = () => {
       if (params.has("v")) {
         return params.get("v");
       }
-      // Handle other YouTube URL formats if necessary
       const pathname = urlObj.pathname;
       if (pathname.startsWith("/embed/")) {
         return pathname.split("/embed/")[1];
@@ -39,32 +44,23 @@ const YouTubeComments = () => {
       }
       return input;
     } catch (e) {
-      // If input is not a valid URL, assume it's a plain video ID
       return input;
     }
   };
 
-  const handleAuth = async () => {
-    window.location.href = "https://youtube-comments-backend-23opjzqi7q-uc.a.run.app/auth/google"; // Replace with your Cloud Run URL
+  const handleAuth = async (videoId, maxResults) => {
+    const state = btoa(JSON.stringify({ videoId, maxResults }));
+    window.location.href = `https://youtube-comments-backend-23opjzqi7q-uc.a.run.app/auth/google?state=${state}`;
   };
 
-  const fetchComments = async () => {
+  const fetchComments = async (token, videoId, maxResults) => {
     setError(null);
     setLoading(true);
 
-    // Check if access token is available, if not handle authentication
-    if (!accessToken) {
-      console.log("No access token found. Initiating authentication...");
-      await handleAuth();
-      return;
-    }
-
-    const validVideoId = extractVideoId(videoId);
-    console.log("Fetching comments for video ID:", validVideoId);
     try {
-      const response = await axios.post("https://youtube-comments-backend-23opjzqi7q-uc.a.run.app/youtube/comments", { // Replace with your Cloud Run URL
-        videoId: validVideoId,
-        accessToken,
+      const response = await axios.post("https://youtube-comments-backend-23opjzqi7q-uc.a.run.app/youtube/comments", {
+        videoId: videoId || extractVideoId(videoId),
+        accessToken: token || accessToken,
         maxResults,
       });
       const commentThreads = response.data;
@@ -78,13 +74,21 @@ const YouTubeComments = () => {
       console.error("Error fetching comment threads", error);
       if (error.response && error.response.status === 401) {
         setError("Session expired. Please re-authenticate.");
-        await handleAuth(); // Prompt re-authentication
+        handleAuth(videoId, maxResults);
       } else if (error.response && error.response.status === 404) {
         setError("Video not found");
       } else {
         setError("Failed to fetch comments. Please try again.");
       }
       setLoading(false);
+    }
+  };
+
+  const handleFetchComments = async () => {
+    if (!accessToken) {
+      await handleAuth(videoId, maxResults);
+    } else {
+      await fetchComments(accessToken, videoId, maxResults);
     }
   };
 
@@ -117,7 +121,7 @@ const YouTubeComments = () => {
           <MenuItem value={100}>100</MenuItem>
         </Select>
       </FormControl>
-      <Button variant="contained" color="primary" onClick={fetchComments} disabled={loading}>
+      <Button variant="contained" color="primary" onClick={handleFetchComments} disabled={loading}>
         Fetch Comments
       </Button>
       {loading && <CircularProgress sx={{ marginTop: 2 }} />}
