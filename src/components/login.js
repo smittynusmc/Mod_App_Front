@@ -2,22 +2,24 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import { auth } from "./firebase";
 import { toast } from "react-toastify";
-import SignInwithGoogle from "./signInWIthGoogle";  // Ensure this matches the file name exactly
+import SignInWithGoogle from "./SignInWithGoogle";  // Ensure this matches the file name exactly
 import { Container, Box, TextField, Button, Typography, Link } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      console.log("User logged in Successfully");
-      window.location.href = "/profile";
-      toast.success("User logged in Successfully", {
+      console.log("User logged in successfully");
+      toast.success("User logged in successfully", {
         position: "top-center",
       });
+      navigate("/profile"); // Use navigate to redirect to profile page
     } catch (error) {
       console.log(error.message);
       toast.error(error.message, {
@@ -78,7 +80,7 @@ function Login() {
           New user? <Link href="/register">Register Here</Link>
         </Typography>
 
-        <SignInwithGoogle />
+        <SignInWithGoogle />
       </Box>
     </Container>
   );

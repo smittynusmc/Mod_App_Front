@@ -1,47 +1,44 @@
+import React from "react";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth, db } from "./firebase";
 import { toast } from "react-toastify";
 import { setDoc, doc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
 function SignInWithGoogle() {
+  const navigate = useNavigate();
+
   const googleLogin = async () => {
     const provider = new GoogleAuthProvider();
     try {
+      console.log("Initiating sign-in with popup");
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
       if (user) {
+        console.log("User signed in", user);
         await setDoc(doc(db, "Users", user.uid), {
           email: user.email,
           firstName: user.displayName,
           photo: user.photoURL,
           lastName: "",
         });
-        toast.success("User logged in Successfully", {
+        console.log("User data saved to Firestore");
+        toast.success("User logged in successfully", {
           position: "top-center",
         });
-        window.location.href = "/profile";
+        navigate("/profile");
       }
     } catch (error) {
       console.error("Error during sign-in:", error);
-      let errorMessage = "Error during sign-in. Please try again.";
-      if (error.message) {
-        try {
-          const response = await fetch(error.message);
-          if (response.headers.get("content-type")?.includes("application/json")) {
-            const parsedError = await response.json();
-            errorMessage = parsedError.error || errorMessage;
-          } else {
-            errorMessage = await response.text();
-          }
-        } catch (e) {
-          if (error.message.includes("Unauthorized")) {
-            errorMessage = "Unauthorized access. Please try again.";
-          }
-        }
+      if (error.code === 'auth/popup-closed-by-user') {
+        toast.error("Sign-in popup was closed. Please try again.", {
+          position: "bottom-center",
+        });
+      } else {
+        toast.error("Error during sign-in. Please try again.", {
+          position: "bottom-center",
+        });
       }
-      toast.error(errorMessage, {
-        position: "bottom-center",
-      });
     }
   };
 
