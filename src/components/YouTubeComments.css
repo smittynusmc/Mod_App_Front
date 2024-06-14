@@ -1,4 +1,11 @@
 /* src/YouTubeComments.css */
+
+/* src/YouTubeComments.css */
+.youtube-comments {
+  display: flex;
+  flex-direction: row; /* Change to row if you want horizontal layout */
+}
+
 .scrollable-list {
     max-height: 400px; /* Adjust the height as needed */
     overflow-y: auto;

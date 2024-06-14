@@ -2,7 +2,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import { auth } from "./firebase";
 import { toast } from "react-toastify";
-import SignInWithGoogle from "./SignInWithGoogle";  // Ensure this matches the file name exactly
+import SignInWithGoogle from "./signInWIthGoogle";  // Ensure this matches the file name exactly
 import { Container, Box, TextField, Button, Typography, Link } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 

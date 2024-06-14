@@ -1,0 +1,53 @@
+.wheel-container {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  margin: 0 auto;
+}
+
+.wheel {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 5px solid #ccc;
+  position: relative;
+  transition: transform 0.5s ease-out;
+  overflow: hidden;
+}
+
+.wheel-segment {
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform-origin: 0% 50%;
+  clip-path: polygon(100% 50%, 0% 0%, 0% 100%);
+}
+
+.wheel-text {
+  position: absolute;
+  width: 200%;
+  height: 50%;
+  top: 50%;
+  left: 0;
+  transform: rotate(-45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.wheel-pointer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 20px solid red;
+  z-index: 1;
+}

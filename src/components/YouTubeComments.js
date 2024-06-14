@@ -1,7 +1,22 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { TextField, Button, Select, MenuItem, InputLabel, FormControl, Typography, Container, Paper, List, ListItem, ListItemText, CircularProgress } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+  Typography,
+  Container,
+  Paper,
+  List,
+  ListItem,
+  ListItemText,
+  CircularProgress,
+} from "@mui/material";
 import "./YouTubeComments.css";
+import Wheel from "./Wheel"; // adjust the import path as necessary
 
 const YouTubeComments = () => {
   const [videoId, setVideoId] = useState("");
@@ -10,6 +25,9 @@ const YouTubeComments = () => {
   const [maxResults, setMaxResults] = useState(10);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [winner, setWinner] = useState(null);
+  const [prizeNumber, setPrizeNumber] = useState(null);
+  const [spinWheel, setSpinWheel] = useState(false);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -58,15 +76,22 @@ const YouTubeComments = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("https://youtube-comments-backend-23opjzqi7q-uc.a.run.app/youtube/comments", {
-        videoId: videoId || extractVideoId(videoId),
-        accessToken: token || accessToken,
-        maxResults,
-      });
+      const response = await axios.post(
+        "https://youtube-comments-backend-23opjzqi7q-uc.a.run.app/youtube/comments",
+        {
+          videoId: videoId || extractVideoId(videoId),
+          accessToken: token || accessToken,
+          maxResults,
+        }
+      );
       const commentThreads = response.data;
-      const authors = commentThreads.flatMap(thread => [
+      const authors = commentThreads.flatMap((thread) => [
         thread.snippet.topLevelComment.snippet.authorDisplayName,
-        ...(thread.replies ? thread.replies.comments.map(reply => reply.snippet.authorDisplayName) : [])
+        ...(thread.replies
+          ? thread.replies.comments.map(
+              (reply) => reply.snippet.authorDisplayName
+            )
+          : []),
       ]);
       setCommentAuthors(authors);
       setLoading(false);
@@ -92,14 +117,25 @@ const YouTubeComments = () => {
     }
   };
 
-  const selectWinner = () => {
-    if (commentAuthors.length === 0) return;
-    const winner = commentAuthors[Math.floor(Math.random() * commentAuthors.length)];
-    alert(`The winner is: ${winner}`);
+  const startSpin = () => {
+    const randomIndex = Math.floor(Math.random() * commentAuthors.length);
+    setPrizeNumber(randomIndex);
+    setSpinWheel(true);
   };
 
+  const handleWinner = () => {
+    setWinner(commentAuthors[prizeNumber]);
+    setSpinWheel(false);
+  };
+
+  const prizeSegments = commentAuthors.map((author) => ({ option: author }));
+
   return (
-    <Container component={Paper} elevation={3} sx={{ padding: 4, marginTop: 4 }}>
+    <Container
+      component={Paper}
+      elevation={3}
+      sx={{ padding: 4, marginTop: 4 }}
+    >
       <Typography variant="h5" gutterBottom>
         YouTube Comment Picker
       </Typography>
@@ -113,7 +149,11 @@ const YouTubeComments = () => {
       />
       <FormControl fullWidth variant="outlined" margin="normal">
         <InputLabel>Max Results</InputLabel>
-        <Select value={maxResults} onChange={(e) => setMaxResults(Number(e.target.value))} label="Max Results">
+        <Select
+          value={maxResults}
+          onChange={(e) => setMaxResults(Number(e.target.value))}
+          label="Max Results"
+        >
           <MenuItem value={10}>10</MenuItem>
           <MenuItem value={15}>15</MenuItem>
           <MenuItem value={25}>25</MenuItem>
@@ -121,12 +161,21 @@ const YouTubeComments = () => {
           <MenuItem value={100}>100</MenuItem>
         </Select>
       </FormControl>
-      <Button variant="contained" color="primary" onClick={handleFetchComments} disabled={loading}>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleFetchComments}
+        disabled={loading}
+      >
         Fetch Comments
       </Button>
       {loading && <CircularProgress sx={{ marginTop: 2 }} />}
-      {error && <Typography color="error" sx={{ marginTop: 2 }}>{error}</Typography>}
-      <List sx={{ marginTop: 2, maxHeight: 400, overflow: 'auto' }}>
+      {error && (
+        <Typography color="error" sx={{ marginTop: 2 }}>
+          {error}
+        </Typography>
+      )}
+      <List sx={{ marginTop: 2, maxHeight: 400, overflow: "auto" }}>
         {commentAuthors.map((author, index) => (
           <ListItem key={index}>
             <ListItemText primary={author} />
@@ -134,9 +183,27 @@ const YouTubeComments = () => {
         ))}
       </List>
       {commentAuthors.length > 0 && (
-        <Button variant="contained" color="secondary" onClick={selectWinner} sx={{ marginTop: 2 }}>
-          Select Winner
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={startSpin}
+          sx={{ marginTop: 2 }}
+        >
+          Spin Wheel
         </Button>
+      )}
+      {spinWheel && (
+        <Wheel
+          mustStartSpinning={spinWheel}
+          prizeNumber={prizeNumber}
+          data={prizeSegments}
+          onStopSpinning={handleWinner}
+        />
+      )}
+      {winner && (
+        <Typography variant="h6" color="primary" sx={{ marginTop: 2 }}>
+          The winner is: {winner}
+        </Typography>
       )}
     </Container>
   );

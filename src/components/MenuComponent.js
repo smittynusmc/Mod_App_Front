@@ -1,6 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AppBar, Toolbar, IconButton, Menu, MenuItem, Typography, Box } from "@mui/material";
+import {
+  AppBar,
+  Toolbar,
+  IconButton,
+  Menu,
+  MenuItem,
+  Typography,
+  Box,
+} from "@mui/material";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import { auth } from "./firebase";
 import { signOut } from "firebase/auth"; // Import the signOut function
@@ -48,6 +56,11 @@ const MenuComponent = () => {
     handleClose();
   };
 
+  const handlePrizeWheel = () => {
+    navigate("/prize-wheel");
+    handleClose();
+  };
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -71,19 +84,20 @@ const MenuComponent = () => {
               id="menu-appbar"
               anchorEl={anchorEl}
               anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
+                vertical: "top",
+                horizontal: "right",
               }}
               keepMounted
               transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
+                vertical: "top",
+                horizontal: "right",
               }}
               open={Boolean(anchorEl)}
               onClose={handleClose}
             >
               <MenuItem onClick={handleProfile}>Profile</MenuItem>
               <MenuItem onClick={handleFetchVideos}>Fetch Videos</MenuItem>
+              <MenuItem onClick={handlePrizeWheel}>Prize Wheel</MenuItem>
               <MenuItem onClick={handleLogout}>Log Off</MenuItem>
             </Menu>
           </div>
