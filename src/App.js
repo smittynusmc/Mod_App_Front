@@ -15,7 +15,7 @@ import YouTubeComments from "./components/YouTubeComments";
 import MenuComponent from "./components/MenuComponent"; // Import the MenuComponent
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Wheel from "./components/Wheel";
+import RandomPicker from "./components/RandomPicker";
 
 function App() {
   const [user, setUser] = useState();
@@ -46,8 +46,7 @@ function App() {
                 element={<YouTubeComments />}
                 className="youtube-comments"
               />
-              <Route path="/prize-wheel" element={<Wheel />} />{" "}
-              {/* New route for PrizeWheel */}
+              <Route path="/random-picker" element={<RandomPicker />} />
             </Routes>
             <ToastContainer />
           </div>

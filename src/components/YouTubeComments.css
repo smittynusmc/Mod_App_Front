@@ -1,15 +1,66 @@
 /* src/YouTubeComments.css */
 
-/* src/YouTubeComments.css */
 .youtube-comments {
   display: flex;
-  flex-direction: row; /* Change to row if you want horizontal layout */
+  flex-direction: column; /* Ensure a vertical layout */
+  padding: 16px;
+  font-family: 'Helvetica', sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-text);
 }
 
 .scrollable-list {
-    max-height: 400px; /* Adjust the height as needed */
-    overflow-y: auto;
-    border: 1px solid #ccc; /* Optional: Add a border for better visibility */
-    padding: 10px; /* Optional: Add padding for better spacing */
-  }
-  
+  max-height: 400px; /* Adjust the height as needed */
+  overflow-y: auto;
+  border: 1px solid #ccc; /* Optional: Add a border for better visibility */
+  padding: 10px; /* Optional: Add padding for better spacing */
+  background-color: var(--color-background); /* Ensure consistency with background color */
+  color: var(--color-text); /* Ensure consistency with text color */
+}
+
+.youtube-comments .MuiTypography-root {
+  color: var(--color-text);
+}
+
+.youtube-comments .MuiButton-containedPrimary {
+  background-color: var(--color-button-start);
+  color: var(--color-button-text);
+}
+
+.youtube-comments .MuiButton-containedPrimary:hover {
+  background-color: var(--color-button-start-hover, #003bb5);
+}
+
+.youtube-comments .MuiCircularProgress-root {
+  color: var(--color-button-start);
+}
+
+.youtube-comments .MuiTypography-colorError {
+  color: var(--color-button-stop);
+}
+
+.youtube-comments .MuiFormControl-root {
+  margin-bottom: 16px; /* Ensure spacing between form controls */
+}
+
+.youtube-comments .MuiTextField-root {
+  margin-bottom: 16px; /* Ensure spacing between text fields */
+}
+
+.youtube-comments .MuiSelect-select {
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+.youtube-comments .MuiList-root {
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+.youtube-comments .MuiListItem-root {
+  border-bottom: 1px solid #ccc; /* Optional: Add a bottom border for better separation */
+}
+
+.youtube-comments .MuiListItemText-primary {
+  color: var(--color-text);
+}

@@ -1,4 +1,4 @@
-class SpinWheel {
+/* class SpinWheel {
   constructor(canvasId, options, onFinish) {
     this.canvas = document.getElementById(canvasId);
     this.ctx = this.canvas.getContext("2d");
@@ -153,3 +153,4 @@ class SpinWheel {
 }
 
 export default SpinWheel;
+ */

@@ -56,8 +56,8 @@ const MenuComponent = () => {
     handleClose();
   };
 
-  const handlePrizeWheel = () => {
-    navigate("/prize-wheel");
+  const handleRandomPicker = () => {
+    navigate("/random-picker");
     handleClose();
   };
 
@@ -97,7 +97,9 @@ const MenuComponent = () => {
             >
               <MenuItem onClick={handleProfile}>Profile</MenuItem>
               <MenuItem onClick={handleFetchVideos}>Fetch Videos</MenuItem>
-              <MenuItem onClick={handlePrizeWheel}>Prize Wheel</MenuItem>
+              <MenuItem onClick={handleRandomPicker}>
+                Random Picker Test
+              </MenuItem>
               <MenuItem onClick={handleLogout}>Log Off</MenuItem>
             </Menu>
           </div>
