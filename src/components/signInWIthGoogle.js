@@ -1,6 +1,6 @@
 import React from "react";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { auth, db } from "./firebase";
+import { auth, db } from "./firebase"; // Ensure this is your correct Firebase configuration
 import { toast } from "react-toastify";
 import { setDoc, doc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
@@ -30,8 +30,19 @@ function SignInWithGoogle() {
       }
     } catch (error) {
       console.error("Error during sign-in:", error);
-      if (error.code === 'auth/popup-closed-by-user') {
+      if (error.code === "auth/popup-closed-by-user") {
         toast.error("Sign-in popup was closed. Please try again.", {
+          position: "bottom-center",
+        });
+      } else if (error.code === "auth/network-request-failed") {
+        toast.error(
+          "Network error. Please check your connection and try again.",
+          {
+            position: "bottom-center",
+          }
+        );
+      } else if (error.code === "auth/cancelled-popup-request") {
+        toast.error("Another sign-in attempt was made. Please try again.", {
           position: "bottom-center",
         });
       } else {
@@ -49,7 +60,11 @@ function SignInWithGoogle() {
         style={{ display: "flex", justifyContent: "center", cursor: "pointer" }}
         onClick={googleLogin}
       >
-        <img src={require("../google.png")} width={"60%"} alt="Sign in with Google" />
+        <img
+          src={require("../google.png")}
+          width={"60%"}
+          alt="Sign in with Google"
+        />
       </div>
     </div>
   );

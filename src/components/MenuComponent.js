@@ -57,7 +57,7 @@ const MenuComponent = () => {
   };
 
   const handleRandomPicker = () => {
-    navigate("/random-picker");
+    navigate("/test");
     handleClose();
   };
 
@@ -97,9 +97,7 @@ const MenuComponent = () => {
             >
               <MenuItem onClick={handleProfile}>Profile</MenuItem>
               <MenuItem onClick={handleFetchVideos}>Fetch Videos</MenuItem>
-              <MenuItem onClick={handleRandomPicker}>
-                Random Picker Test
-              </MenuItem>
+              <MenuItem onClick={handleRandomPicker}>Test</MenuItem>
               <MenuItem onClick={handleLogout}>Log Off</MenuItem>
             </Menu>
           </div>
