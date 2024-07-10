@@ -14,8 +14,9 @@ import {
   ListItem,
   ListItemText,
   CircularProgress,
+  Box,
 } from "@mui/material";
-import RandomPicker from "./RandomPicker"; // Import RandomPicker component
+import RandomPicker from "./RandomPicker";
 import "./YouTubeComments.css";
 
 const YouTubeComments = () => {
@@ -72,7 +73,6 @@ const YouTubeComments = () => {
   const fetchComments = async (token, videoId, maxResults) => {
     setError(null);
     setLoading(true);
-    setCommentAuthors([]); // Clear previous comments to indicate loading
 
     try {
       const response = await axios.post(
@@ -83,22 +83,16 @@ const YouTubeComments = () => {
           maxResults,
         }
       );
-      if (response.data && response.data.length > 0) {
-        const commentThreads = response.data;
-        const authors = commentThreads.flatMap((thread) => [
-          thread.snippet.topLevelComment.snippet.authorDisplayName,
-          ...(thread.replies
-            ? thread.replies.comments.map(
-                (reply) => reply.snippet.authorDisplayName
-              )
-            : []),
-        ]);
-        setCommentAuthors(authors);
-        console.log("Fetched authors:", authors);
-      } else {
-        setError("No comments found.");
-        console.log("No comments found");
-      }
+      const commentThreads = response.data;
+      const authors = commentThreads.flatMap((thread) => [
+        thread.snippet.topLevelComment.snippet.authorDisplayName,
+        ...(thread.replies
+          ? thread.replies.comments.map(
+              (reply) => reply.snippet.authorDisplayName
+            )
+          : []),
+      ]);
+      setCommentAuthors(authors);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching comment threads", error);
@@ -122,13 +116,12 @@ const YouTubeComments = () => {
     }
   };
 
-  const handleWinnerSelected = (selectedWinner) => {
-    setWinner(selectedWinner);
-    console.log("Winner selected:", selectedWinner);
-  };
-
   return (
-    <Container component={Paper} elevation={3} className="youtube-comments">
+    <Container
+      component={Paper}
+      elevation={3}
+      sx={{ padding: 4, marginTop: 4 }}
+    >
       <Typography variant="h5" gutterBottom>
         YouTube Comment Picker
       </Typography>
@@ -139,14 +132,8 @@ const YouTubeComments = () => {
         value={videoId}
         onChange={(e) => setVideoId(e.target.value)}
         margin="normal"
-        className="youtube-comments__input"
       />
-      <FormControl
-        fullWidth
-        variant="outlined"
-        margin="normal"
-        className="youtube-comments__select"
-      >
+      <FormControl fullWidth variant="outlined" margin="normal">
         <InputLabel>Max Results</InputLabel>
         <Select
           value={maxResults}
@@ -160,49 +147,38 @@ const YouTubeComments = () => {
           <MenuItem value={100}>100</MenuItem>
         </Select>
       </FormControl>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleFetchComments}
-        disabled={loading}
-        className="youtube-comments__button"
-      >
-        Fetch Comments
-      </Button>
-      {loading && <CircularProgress className="youtube-comments__loading" />}
+      <Box display="flex" justifyContent="center" mt={2} mb={2}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleFetchComments}
+          disabled={loading}
+        >
+          Fetch Comment Handles
+        </Button>
+      </Box>
+      {loading && <CircularProgress sx={{ marginTop: 2 }} />}
       {error && (
-        <Typography color="error" className="youtube-comments__error">
+        <Typography color="error" sx={{ marginTop: 2 }}>
           {error}
         </Typography>
       )}
-      <List className="scrollable-list">
-        {commentAuthors.length > 0
-          ? commentAuthors.map((author, index) => (
-              <ListItem key={index} className="youtube-comments__list-item">
-                <ListItemText primary={author} />
-              </ListItem>
-            ))
-          : !loading && (
-              <Typography
-                variant="body1"
-                className="youtube-comments__no-comments"
-              >
-                No comments to display.
-              </Typography>
-            )}
+      <List sx={{ marginTop: 2, maxHeight: 400, overflow: "auto" }}>
+        {commentAuthors.length > 0 ? (
+          commentAuthors.map((author, index) => (
+            <ListItem key={index}>
+              <ListItemText primary={author} />
+            </ListItem>
+          ))
+        ) : (
+          <Box display="flex" justifyContent="center" width="100%">
+            <Typography>No Handles to display.</Typography>
+          </Box>
+        )}
       </List>
-      <div className="youtube-comments__picker">
-        <RandomPicker
-          items={commentAuthors}
-          onWinnerSelected={handleWinnerSelected}
-        />
-      </div>
+      <RandomPicker items={commentAuthors} onWinnerSelected={setWinner} />
       {winner && (
-        <Typography
-          variant="h6"
-          color="primary"
-          className="youtube-comments__winner"
-        >
+        <Typography variant="h6" color="primary" sx={{ marginTop: 2 }}>
           The winner is: {winner}
         </Typography>
       )}

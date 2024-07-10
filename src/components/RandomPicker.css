@@ -38,67 +38,13 @@ body {
 }
 
 .RandomPicker__choice {
-  display: flex;
-  align-content: center;
-  margin: 0;
-  margin-bottom: 1em;
   color: var(--color-text);
   font-size: 60px;
   font-weight: bold;
-  line-height: 1;
-  text-align: center;
-  white-space: nowrap;
-}
-
-.RandomPicker__button {
-  display: block;
-  padding: .8em 1.6em;
-  min-width: 160px;
-  color: var(--color-button-text);
-  font-size: 20px;
-  font-weight: bold;
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  border: 0;
-  border-radius: 4em;
-  background-color: var(--color-button-start);
-  user-select: none;
-  cursor: pointer;
-  transition: background-color 250ms ease-in-out, color 150ms ease-in-out;
-}
-
-.RandomPicker__button:hover {
-  background-color: var(--color-button-start-hover, #003bb5);
-}
-
-.RandomPicker__button--stop {
-  background-color: var(--color-button-stop);
-}
-
-.RandomPicker__button--stop:hover {
-  background-color: var(--color-button-stop-hover, #cc0000);
-}
-
-.RandomPicker__button--reset {
-  color: var(--color-text);
-  font-size: 14px;
-  text-transform: lowercase;
-  background-color: inherit;
-}
-
-.RandomPicker__button--reset:disabled {
-  color: var(--color-text-light);
-  text-decoration: line-through;
-  cursor: not-allowed;
 }
 
 .RandomPicker__controls {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.RandomPicker__controls > *:not(:last-child) {
-  margin-bottom: 16px;
 }

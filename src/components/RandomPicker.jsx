@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { Box, Button, Typography } from "@mui/material";
 
 class RandomPicker extends React.PureComponent {
   constructor() {
@@ -64,7 +65,7 @@ class RandomPicker extends React.PureComponent {
     const { isRunning, currentChoice } = this.state;
 
     return (
-      <div className="RandomPicker">
+      <Box className="RandomPicker" sx={{ textAlign: "center", mt: 4 }}>
         <RandomPickerChoice choice={currentChoice} />
         <RandomPickerControls
           isRunning={isRunning}
@@ -73,7 +74,7 @@ class RandomPicker extends React.PureComponent {
           stop={this.stop}
           reset={this.reset}
         />
-      </div>
+      </Box>
     );
   }
 }
@@ -86,12 +87,12 @@ RandomPicker.propTypes = {
 class RandomPickerChoice extends React.PureComponent {
   render() {
     const { choice } = this.props;
-    const content = choice ? choice.trim() : "?";
+    const content = choice ? choice.trim() : "Click start to pick a winner!";
 
     return (
-      <div className="RandomPicker__choice">
-        <span className="RandomPicker__choiceItem">{content}</span>
-      </div>
+      <Typography variant="h4" className="RandomPicker__choice" gutterBottom>
+        {content}
+      </Typography>
     );
   }
 }
@@ -105,23 +106,25 @@ class RandomPickerControls extends React.PureComponent {
     const { isRunning, hasChoice, start, stop, reset } = this.props;
 
     return (
-      <div className="RandomPicker__controls">
-        <button
-          className={`RandomPicker__button ${
-            isRunning ? "RandomPicker__button--stop" : ""
-          }`}
+      <Box
+        className="RandomPicker__controls"
+        sx={{ mt: 2, display: "flex", justifyContent: "center", gap: 2 }}
+      >
+        <Button
+          variant="contained"
+          color={isRunning ? "secondary" : "primary"}
           onClick={isRunning ? stop : start}
         >
-          {isRunning ? "stop" : "start"}
-        </button>
-        <button
-          disabled={isRunning || !hasChoice}
-          className="RandomPicker__button RandomPicker__button--reset"
+          {isRunning ? "Stop" : "Start"}
+        </Button>
+        <Button
+          variant="outlined"
           onClick={reset}
+          disabled={isRunning || !hasChoice}
         >
-          reset
-        </button>
-      </div>
+          Reset
+        </Button>
+      </Box>
     );
   }
 }
