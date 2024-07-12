@@ -1,0 +1,31 @@
+/* MenuComponent.css */
+
+/* Style for the AppBar to make it fixed at the top */
+.app-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: #1976d2; /* Adjust the background color as needed */
+  }
+  
+  /* Style for the Toolbar inside the AppBar */
+  .toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: right;
+    width: 100%;
+  }
+  
+  /* Style for the Typography (title) inside the Toolbar */
+  .toolbar-title {
+    flex-grow: 1;
+    text-align: left;
+  }
+  
+  /* Additional styles for the menu items */
+  .menu-item {
+    color: #000; /* Change color as needed */
+  }
+  

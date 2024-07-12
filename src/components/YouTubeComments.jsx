@@ -27,12 +27,21 @@ const YouTubeComments = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [winner, setWinner] = useState(null);
+  const [screenType, setScreenType] = useState("desktop");
 
   useEffect(() => {
+    const handleResize = () => {
+      setScreenType(window.innerWidth < 600 ? "mobile" : "desktop");
+    };
+    // Call handleResize initially to set the initial screen type
+    handleResize();
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get("access_token");
     const videoIdParam = urlParams.get("videoId");
     const maxResultsParam = urlParams.get("maxResults");
+
+    // Add event listener for window resize
+    window.addEventListener("resize", handleResize);
 
     if (token) {
       setAccessToken(token);
@@ -40,7 +49,9 @@ const YouTubeComments = () => {
       if (maxResultsParam) setMaxResults(Number(maxResultsParam));
       fetchComments(token, videoIdParam, maxResultsParam);
     }
-  }, []);
+    // Cleanup function to remove the event listener
+    return () => window.removeEventListener("resize", handleResize);
+  }, []); // Empty dependency array means this effect runs once on mount
 
   const extractVideoId = (input) => {
     try {
@@ -108,7 +119,8 @@ const YouTubeComments = () => {
     }
   };
 
-  const handleFetchComments = async () => {
+  const handleFetchComments = async (event) => {
+    event.preventDefault(); // Prevent form submission from reloading the page
     if (!accessToken) {
       await handleAuth(videoId, maxResults);
     } else {
@@ -120,7 +132,7 @@ const YouTubeComments = () => {
     <Container
       component={Paper}
       elevation={3}
-      sx={{ padding: 4, marginTop: 4 }}
+      sx={{ padding: 4, marginTop: "64px" }} // Adjust the marginTop value
     >
       <Typography variant="h5" gutterBottom>
         YouTube Comment Picker
@@ -147,11 +159,12 @@ const YouTubeComments = () => {
           <MenuItem value={100}>100</MenuItem>
         </Select>
       </FormControl>
+      <p>You are on a {screenType} browser</p>
       <Box display="flex" justifyContent="center" mt={2} mb={2}>
         <Button
           variant="contained"
           color="primary"
-          onClick={handleFetchComments}
+          onClick={(event) => handleFetchComments(event)}
           disabled={loading}
         >
           Fetch Comment Handles

@@ -4,6 +4,7 @@
   display: flex;
   flex-direction: column; /* Ensure a vertical layout */
   padding: 16px;
+  padding-top: var(--appbar-height);
   font-family: 'Helvetica', sans-serif;
   background-color: var(--color-background);
   color: var(--color-text);
@@ -63,4 +64,8 @@
 
 .youtube-comments .MuiListItemText-primary {
   color: var(--color-text);
+}
+
+:root {
+  --appbar-height: 56px; /* Smaller AppBar on smaller screens */
 }
